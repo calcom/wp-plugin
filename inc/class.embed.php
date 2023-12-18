@@ -103,9 +103,10 @@ class Embed
                 if (str_contains($atts['url'], 'https://cal.com/')) {
                     $url = str_replace('https://cal.com/', '/', $url);
                 }
-                elseif (str_contains($atts['url'], 'https://')) {
-                    // Start searching at position 8 to start after 'https://'
-                    $firstSlashPosition = strpos($url, '/', 8);
+                // 'https://' or 'http://' protocol indicate self-hosted instance
+                elseif (str_contains($atts['url'], 'https://') || str_contains($atts['url'], 'http://')) {
+                    // Start searching after 'http(s)://'
+                    $firstSlashPosition = strpos($url, '/', strlen(str_contains($atts['url'], 'https://') ? "https://" : "http://"));
                     $embed_custom_cal_url = substr($url, 0, $firstSlashPosition);
                     $url = substr($url, $firstSlashPosition);
                 }
