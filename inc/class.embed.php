@@ -34,6 +34,9 @@ class Embed
                 case 2:
                     $output = '<span id="calcom-embed-link" data-cal-link="' . esc_attr($atts['url']) . '">' . esc_attr($atts['text']) . '</span>';
                     break;
+                case 3:
+                    $output = $this->get_floating_popup_embed_script($atts['url'], $atts['customCalInstance']);
+                    break;
                 default:
                     $output = '<div id="calcom-embed"></div>';
                     $output .= $this->get_inline_embed_script($atts['url']);
@@ -58,6 +61,23 @@ class Embed
             Cal("inline", {
                 elementOrSelector: selector,
                 calLink: "' . $url . '"
+            });
+        </script>';
+
+        return $script;
+    }
+
+    /**
+     * Adds floating-popup embed JS
+     * 
+     * @param $url Booking link
+     * @return string
+     */
+    public function get_floating_popup_embed_script($url): string
+    {
+        $script = '<script>
+            addEventListener("DOMContentLoaded", (event) => {
+                Cal("floatingButton", {"calLink":"' . $url . '"});
             });
         </script>';
 
