@@ -27,5 +27,10 @@
 			}
 			p(cal, ar);
 		};
-})(window, "https://cal.com/embed.js", "init");
-Cal("init");
+})(window, customCalUrl.length == 0 ? "https://cal.com/embed.js" : customCalUrl + "/embed/embed.js", "init");
+if(customCalUrl.length == 0) {
+	Cal("init");
+}
+else {
+	Cal("init", {origin:customCalUrl})
+}
