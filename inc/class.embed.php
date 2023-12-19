@@ -35,7 +35,7 @@ class Embed
                     $output = '<span id="calcom-embed-link" data-cal-link="' . esc_attr($atts['url']) . '">' . esc_attr($atts['text']) . '</span>';
                     break;
                 case 3:
-                    $output = $this->get_floating_popup_embed_script($atts['url'], $atts['customCalInstance']);
+                    $output = $this->get_floating_popup_embed_script($atts['url'], $atts['text']);
                     break;
                 default:
                     $output = '<div id="calcom-embed"></div>';
@@ -58,9 +58,11 @@ class Embed
     {
         $script = '<script>
             const selector = document.getElementById("calcom-embed");
-            Cal("inline", {
-                elementOrSelector: selector,
-                calLink: "' . $url . '"
+            addEventListener("DOMContentLoaded", (event) => {
+                Cal("inline", {
+                    elementOrSelector: selector,
+                    calLink: "' . $url . '"
+                });
             });
         </script>';
 
@@ -71,13 +73,15 @@ class Embed
      * Adds floating-popup embed JS
      * 
      * @param $url Booking link
+     * @param $text Button text
      * @return string
      */
-    public function get_floating_popup_embed_script($url): string
+    public function get_floating_popup_embed_script($url, $text): string
     {
+        $button_text = strlen($text) > 0 ? '"buttonText":"' . $text . '"' : '';
         $script = '<script>
             addEventListener("DOMContentLoaded", (event) => {
-                Cal("floatingButton", {"calLink":"' . $url . '"});
+                Cal("floatingButton", {"calLink":"' . $url . '"' . (strlen($button_text) == 0 ? "" : "," . $button_text) . '});
             });
         </script>';
 
