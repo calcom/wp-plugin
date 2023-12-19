@@ -33,7 +33,7 @@ class Embed
             switch ($atts['type']) {
                 case 2:
                     $output = '<span id="calcom-embed-link" data-cal-link="' . esc_attr($atts['url']) . '">' . esc_attr($atts['text']) . '</span>';
-                    $output .= '<script>const customCalUrl = "' . $atts['customCalInstance'] . '";</script>';
+                    $output .= '<script>var customCalUrl = "' . $atts['customCalInstance'] . '";</script>';
                     break;
                 default:
                     $output = '<div id="calcom-embed"></div>';
@@ -56,7 +56,7 @@ class Embed
     public function get_inline_embed_script($url, $custom_cal_url): string
     {
         $script = '<script>
-            const customCalUrl = "' . $custom_cal_url . '";
+            var customCalUrl = "' . $custom_cal_url . '";
             addEventListener("DOMContentLoaded", (event) => {
                 const selector = document.getElementById("calcom-embed");
                 Cal("inline", {
