@@ -33,13 +33,14 @@ class Embed
             switch ($atts['type']) {
                 case 2:
                     $output = '<span id="calcom-embed-link" data-cal-link="' . esc_attr($atts['url']) . '">' . esc_attr($atts['text']) . '</span>';
+                    $output .= '<script>var customCalUrl = "' . $atts['customCalInstance'] . '";</script>';
                     break;
                 case 3:
                     $output = $this->get_floating_popup_embed_script($atts['url'], $atts['text']);
                     break;
                 default:
                     $output = '<div id="calcom-embed"></div>';
-                    $output .= $this->get_inline_embed_script($atts['url']);
+                    $output .= $this->get_inline_embed_script($atts['url'], $atts['customCalInstance']);
             }
 
             return $output;
@@ -52,12 +53,14 @@ class Embed
      * Adds inline embed JS
      * 
      * @param $url Booking link
+     * @param $custom_cal_url Custom cal.com URL (if self-hosted instance is used)
      * @return string
      */
-    public function get_inline_embed_script($url): string
+    public function get_inline_embed_script($url, $custom_cal_url): string
     {
         $script = '<script>
             addEventListener("DOMContentLoaded", (event) => {
+                var customCalUrl = "' . $custom_cal_url . '";
                 const selector = document.getElementById("calcom-embed");
                 Cal("inline", {
                     elementOrSelector: selector,
@@ -112,13 +115,23 @@ class Embed
             $embed_url = '';
             $embed_type = '1';
             $embed_text = 'Book me';
+            $embed_custom_cal_url = '';
 
             if (isset($atts['url']) && $atts['url']) {
 
                 $url = sanitize_text_field($atts['url']);
 
                 // ensure url is sanitized correctly
-                $url = str_replace('https://cal.com/', '/', $url);
+                if (str_contains($atts['url'], 'https://cal.com/')) {
+                    $url = str_replace('https://cal.com/', '/', $url);
+                }
+                // 'https://' or 'http://' protocol indicate self-hosted instance
+                elseif (str_contains($atts['url'], 'https://') || str_contains($atts['url'], 'http://')) {
+                    // Start searching after 'http(s)://'
+                    $firstSlashPosition = strpos($url, '/', strlen(str_contains($atts['url'], 'https://') ? "https://" : "http://"));
+                    $embed_custom_cal_url = substr($url, 0, $firstSlashPosition);
+                    $url = substr($url, $firstSlashPosition);
+                }
 
                 $embed_url = $url;
             }
@@ -133,7 +146,7 @@ class Embed
                 $embed_type = sanitize_text_field($atts['type']);
             }
 
-            return ['url' => $embed_url, 'type' => $embed_type, 'text' => $embed_text];
+            return ['url' => $embed_url, 'type' => $embed_type, 'text' => $embed_text, 'customCalInstance' => $embed_custom_cal_url];
         }
 
         return [];
