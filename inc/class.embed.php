@@ -59,8 +59,8 @@ class Embed
     public function get_inline_embed_script($url, $custom_cal_url): string
     {
         $script = '<script>
+            var customCalUrl = "' . $custom_cal_url . '";
             addEventListener("DOMContentLoaded", (event) => {
-                var customCalUrl = "' . $custom_cal_url . '";
                 const selector = document.getElementById("calcom-embed");
                 Cal("inline", {
                     elementOrSelector: selector,
