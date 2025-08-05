@@ -122,13 +122,13 @@ class Embed
                 $url = sanitize_text_field($atts['url']);
 
                 // ensure url is sanitized correctly
-                if (str_contains($atts['url'], 'https://cal.com/')) {
+                if (strpos($atts['url'], 'https://cal.com/') !== false) {
                     $url = str_replace('https://cal.com/', '/', $url);
                 }
                 // 'https://' or 'http://' protocol indicate self-hosted instance
-                elseif (str_contains($atts['url'], 'https://') || str_contains($atts['url'], 'http://')) {
+                elseif (strpos($atts['url'], 'https://') !== false || strpos($atts['url'], 'http://') !== false) {
                     // Start searching after 'http(s)://'
-                    $firstSlashPosition = strpos($url, '/', strlen(str_contains($atts['url'], 'https://') ? "https://" : "http://"));
+                    $firstSlashPosition = strpos($url, '/', strlen(strpos($atts['url'], 'https://') !== false ? "https://" : "http://"));
                     $embed_custom_cal_url = substr($url, 0, $firstSlashPosition);
                     $url = substr($url, $firstSlashPosition);
                 }
