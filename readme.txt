@@ -1,11 +1,11 @@
 === Cal.com ===
 Contributors: calcom, turn2honey
 Tags: appointment, appointment booking, appointment scheduling, booking calendar, calcom
-Requires at least: 4.0
-Tested up to: 6.0.1
-Stable tag: 1.0.0
-Requires PHP: 5.2.4
-License: GNU General Public License
+Requires at least: 4.6
+Tested up to: 6.9
+Stable tag: 2.0.0
+Requires PHP: 7.0
+License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.en.html
 
 Embed Cal.com booking calendar in WordPress.
@@ -58,3 +58,11 @@ Example:
 == Use of  3rd Party Software ==
 
 This plugin relies on [Cal.com embed](https://cal.com). See their [Privacy Policy](https://cal.com/privacy) and [Terms of use](https://cal.com/terms).
+
+
+== Changelog ==
+
+= 1.0.0 - 15-11-2022 =
+
+- Initial release
+- Supports inline & popup embed types
