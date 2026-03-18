@@ -6,149 +6,240 @@ defined('ABSPATH') || exit;
 
 class Embed
 {
-    public function hooks(): void
+    public function hooks()
     {
-        add_shortcode('cal', [$this, 'shortcode']);
+        add_shortcode('cal', array($this, 'shortcode'));
     }
 
-    public function shortcode($atts): string
+    /**
+     * Handle the [cal] shortcode
+     * 
+     * @param array $atts Shortcode attributes
+     * @return string HTML output for embed
+     */
+    public function shortcode($atts)
     {
         $atts = $this->prepare_atts($atts);
+
+        if (empty($atts['url'])) {
+            return '';
+        }
+
         return $this->embed($atts);
     }
 
     /**
-     * Embeds Cal.com booking calendar
+     * Render the embed output and enqueue assets
      * 
-     * @param $atts Embed attributes
-     * @return string
+     * @param array $atts Prepared shortcode attributes
+     * @return string HTML output
      */
-    private function embed($atts): string
+    private function embed($atts)
     {
+        $this->enqueue_assets();
 
-        if ($atts) {
+        $widget_data = $this->prepare_widget_data($atts);
 
-            $this->load_embed_scripts();
-
-            switch ($atts['type']) {
-                case 2:
-                    $output = '<span id="calcom-embed-link" data-cal-link="' . esc_attr($atts['url']) . '">' . esc_attr($atts['text']) . '</span>';
-                    $output .= '<script>var customCalUrl = "' . $atts['customCalInstance'] . '";</script>';
-                    break;
-                case 3:
-                    $output = $this->get_floating_popup_embed_script($atts['url'], $atts['text']);
-                    break;
-                default:
-                    $output = '<div id="calcom-embed"></div>';
-                    $output .= $this->get_inline_embed_script($atts['url'], $atts['customCalInstance']);
-            }
-
-            return $output;
+        if (!empty($widget_data)) {
+            wp_add_inline_script(
+                'calcom-embed-js',
+                'window.calcomData = ' . $widget_data . ';',
+                'before'
+            );
         }
 
-        return '';
+        $type = (int) $atts['type'];
+
+        switch ($type) {
+
+            case 2:
+                return '<span id="calcom-embed-link">' . esc_html($atts['text']) . '</span>';
+            case 3:
+                return '';
+            default:
+                return '<div id="calcom-embed"></div>';
+        }
     }
 
     /**
-     * Adds inline embed JS
-     * 
-     * @param $url Booking link
-     * @param $custom_cal_url Custom cal.com URL (if self-hosted instance is used)
-     * @return string
+     * Enqueue JS and CSS assets
      */
-    public function get_inline_embed_script($url, $custom_cal_url): string
-    {
-        $script = '<script>
-            addEventListener("DOMContentLoaded", (event) => {
-                var customCalUrl = "' . $custom_cal_url . '";
-                const selector = document.getElementById("calcom-embed");
-                Cal("inline", {
-                    elementOrSelector: selector,
-                    calLink: "' . $url . '"
-                });
-            });
-        </script>';
-
-        return $script;
-    }
-
-    /**
-     * Adds floating-popup embed JS
-     * 
-     * @param $url Booking link
-     * @param $text Button text
-     * @return string
-     */
-    public function get_floating_popup_embed_script($url, $text): string
-    {
-        $button_text = strlen($text) > 0 ? '"buttonText":"' . $text . '"' : '';
-        $script = '<script>
-            addEventListener("DOMContentLoaded", (event) => {
-                Cal("floatingButton", {"calLink":"' . $url . '"' . (strlen($button_text) == 0 ? "" : "," . $button_text) . '});
-            });
-        </script>';
-
-        return $script;
-    }
-
-    /**
-     * Enqueues registered embed scripts
-     * 
-     * @return void
-     */
-    private function load_embed_scripts(): void
+    private function enqueue_assets()
     {
         wp_enqueue_script('calcom-embed-js');
         wp_enqueue_style('calcom-embed-css');
     }
 
     /**
-     * Sanitizes embed shortcode attributes
+     * Prepare the data object for JS embed handler
      * 
-     * @param $atts Shortcode attributess
-     * @return $array
+     * @param array $atts Prepared shortcode attributes
+     * @return string JSON encoded widget data
      */
-    private function prepare_atts($atts): array
+    private function prepare_widget_data($atts)
     {
-        if ($atts) {
+        $data = array(
+            'type' => (int) $atts['type'],
+            'config' => array(
+                'calLink' => $atts['url'],
+            ),
+            'customCalUrl' => $atts['customCalInstance'],
+        );
 
-            $embed_url = '';
-            $embed_type = '1';
-            $embed_text = 'Book me';
-            $embed_custom_cal_url = '';
+        return function_exists('wp_json_encode') ? wp_json_encode($data) : json_encode($data);
+    }
 
-            if (isset($atts['url']) && $atts['url']) {
-
-                $url = sanitize_text_field($atts['url']);
-
-                // ensure url is sanitized correctly
-                if (str_contains($atts['url'], 'https://cal.com/')) {
-                    $url = str_replace('https://cal.com/', '/', $url);
-                }
-                // 'https://' or 'http://' protocol indicate self-hosted instance
-                elseif (str_contains($atts['url'], 'https://') || str_contains($atts['url'], 'http://')) {
-                    // Start searching after 'http(s)://'
-                    $firstSlashPosition = strpos($url, '/', strlen(str_contains($atts['url'], 'https://') ? "https://" : "http://"));
-                    $embed_custom_cal_url = substr($url, 0, $firstSlashPosition);
-                    $url = substr($url, $firstSlashPosition);
-                }
-
-                $embed_url = $url;
-            }
-
-            if (isset($atts['type']) && $atts['type']) {
-
-                if (isset($atts['text']) && $atts['text']) {
-
-                    $embed_text = sanitize_text_field($atts['text']);
-                }
-
-                $embed_type = sanitize_text_field($atts['type']);
-            }
-
-            return ['url' => $embed_url, 'type' => $embed_type, 'text' => $embed_text, 'customCalInstance' => $embed_custom_cal_url];
+    /**
+     * Prepare and normalize shortcode attributes
+     * 
+     * @param array $atts Raw shortcode attributes
+     * @return array Normalized attributes
+     */
+    private function prepare_atts($atts)
+    {
+        if (!is_array($atts)) {
+            $atts = array();
         }
 
-        return [];
+        $atts = shortcode_atts(array(
+            'url' => '',
+            'type' => 1,
+            'text' => 'Book me',
+            'utm' => '',
+            'prefill' => 'false',
+        ), $atts);
+
+        $normalized = $this->normalize_url($atts['url']);
+        $query_params = $this->build_query_params($atts);
+
+        if (!empty($query_params)) {
+            $normalized['url'] .= '?' . http_build_query($query_params, '', '&');
+        }
+
+        return array(
+            'url' => $normalized['url'],
+            'type' => (int) $atts['type'],
+            'text' => sanitize_text_field($atts['text']),
+            'customCalInstance' => esc_url_raw($normalized['instance']),
+            'prefill' => ($atts['prefill'] === 'true'),
+            'utm' => $this->parse_utm($atts['utm']),
+        );
+    }
+
+    /**
+     * Normalize a URL and detect self-hosted Cal.com instances
+     * 
+     * @param string $url Raw URL
+     * @return array Array with url and instance (if self-hosted)
+     */
+    private function normalize_url($url)
+    {
+        $url = trim($url);
+
+        if (empty($url)) {
+            return array('url' => '', 'instance' => '');
+        }
+
+        // for default URL, only keep the path
+        if (strpos($url, 'https://cal.com/') === 0) {
+
+            $parsed = wp_parse_url($url);
+            $path = isset($parsed['path']) ? trim($parsed['path'], '/') : '';
+
+            return array(
+                'url' => '/' . $path,
+                'instance' => ''
+            );
+        }
+
+        // full URL shows self-hosted instance
+        if (preg_match('#^https?://#i', $url)) {
+
+            $parts = wp_parse_url($url);
+
+            if (!empty($parts['host'])) {
+
+                $scheme = isset($parts['scheme']) ? $parts['scheme'] : 'https';
+                $path = isset($parts['path']) ? trim($parts['path'], '/') : '';
+
+                return array(
+                    'url' => '/' . $path,
+                    'instance' => $scheme . '://' . $parts['host']
+                );
+            }
+        }
+
+        return array(
+            'url' => '/' . trim($url, '/'),
+            'instance' => ''
+        );
+    }
+
+    /**
+     * Build query parameters to prefill and add params
+     * 
+     * @param array $atts Shortcode attributes
+     * @return array Query parameters
+     */
+    private function build_query_params($atts)
+    {
+        $query_params = array();
+
+        // prefill logged in user info
+        if ($atts['prefill'] === 'true' && is_user_logged_in()) {
+
+            $user = wp_get_current_user();
+
+            if (!empty($user->display_name)) {
+                $query_params['name'] = sanitize_text_field($user->display_name);
+            }
+
+            if (!empty($user->user_email)) {
+                $query_params['email'] = sanitize_email($user->user_email);
+            }
+        }
+
+        // merge UTM parameters if they exists
+        $utm = $this->parse_utm($atts['utm']);
+
+        if (!empty($utm)) {
+            $query_params = array_merge($query_params, $utm);
+        }
+
+        return $query_params;
+    }
+
+    /**
+     * Parse a UTM string like "source:website,medium:cpc"
+     * 
+     * @param string $utm_string Comma separated key:value pairs
+     * @return array An array of UTM parameters
+     */
+    private function parse_utm($utm_string)
+    {
+        $utm = array();
+
+        if (empty($utm_string)) {
+            return $utm;
+        }
+
+        $pairs = explode(',', $utm_string);
+
+        foreach ($pairs as $pair) {
+            $parts = explode(':', $pair);
+
+            if (count($parts) !== 2) {
+                continue;
+            }
+
+            $key = sanitize_key(trim($parts[0]));
+            $value = sanitize_text_field(trim($parts[1]));
+
+            if ($key && $value) {
+                $utm['utm_' . $key] = $value;
+            }
+        }
+
+        return $utm;
     }
 }
