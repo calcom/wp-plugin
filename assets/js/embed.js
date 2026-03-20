@@ -1,95 +1,42 @@
 (function () {
     document.addEventListener("DOMContentLoaded", function () {
-
-        if (typeof window.calcomData === "undefined") return;
+        if (!window.calcomData || typeof window.calcomData !== "object") return;
 
         var data = window.calcomData;
+        if (!data) return;
 
-        // determine embed script URL (self-hosted or default)
-        var scriptUrl = data.customCalUrl
-            ? data.customCalUrl + '/embed/embed.js'
-            : 'https://cal.com/embed.js';
+        data.ui = (data.ui && typeof data.ui === "object" && !Array.isArray(data.ui)) ? data.ui : {};
+        data.config = (data.config && typeof data.config === "object" && !Array.isArray(data.config)) ? data.config : {};
 
-        // initialize Cal.com loader
-        (function (C, A, L) {
+        var scriptUrl = data.customCalInstance
+            ? data.customCalInstance.replace(/\/$/, "") + "/embed/embed.js"
+            : "https://cal.com/embed.js";
 
-            var pushArgs = function (obj, args) { obj.q.push(args); };
-            var doc = C.document;
+        window.calcomScriptUrl = scriptUrl;
 
-            C.Cal = C.Cal || function () {
+        var api = Cal("init", "cal_core");
 
-                var cal = C.Cal;
-                var args = arguments;
+        var config = Object.assign({ calLink: data.url || "" }, data.config);
 
-                if (!cal.loaded) {
-
-                    cal.ns = {};
-                    cal.q = cal.q || [];
-
-                    var script = doc.createElement("script");
-                    script.src = A;
-
-                    doc.head.appendChild(script);
-                    cal.loaded = true;
-                }
-
-                if (args[0] === L) {
-
-                    var api = function () { pushArgs(api, arguments); };
-                    var namespace = args[1];
-
-                    api.q = api.q || [];
-
-                    if (typeof namespace === "string") {
-
-                        cal.ns[namespace] = api;
-                        pushArgs(api, args);
-                    } else {
-                        pushArgs(cal, args);
-                    }
-
-                    return;
-                }
-
-                pushArgs(cal, args);
-            };
-        })(window, scriptUrl, "init");
-
-        // initialize Cal with self-host origin if needed
-        if (data.customCalUrl) {
-            Cal("init", { origin: data.customCalUrl });
-        } else {
-            Cal("init");
+        if (Object.keys(data.ui).length) {
+            api("ui", data.ui);
         }
 
-        // handle inline embed
+        // inline embed
         if (data.type === 1) {
-
-            var inlineConfig = data.config || {};
-
-            // ensure the target element exists for inline embeds
-            if (!inlineConfig.elementOrSelector) {
-                inlineConfig.elementOrSelector = "#calcom-embed";
-            }
-
-            Cal("inline", inlineConfig);
+            config.elementOrSelector = "#calcom-embed";
+            api("inline", config);
         }
 
-        // handle floating button embed
-        if (data.type === 3) {
-            Cal("floatingButton", data.config);
-        }
-
-        // modal trigger
+        // modal
         if (data.type === 2) {
-            
             var el = document.getElementById("calcom-embed-link");
-            
-            if (el) {
-                el.addEventListener("click", function () {
-                    Cal("modal", data.config);
-                });
-            }
+            if (el) el.addEventListener("click", function () { api("modal", config); });
+        }
+
+        // floating button
+        if (data.type === 3) {
+            api("floatingButton", config);
         }
     });
 })();

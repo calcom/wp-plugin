@@ -34,7 +34,7 @@ class Embed
      * @param array $atts Prepared shortcode attributes
      * @return string HTML output
      */
-    private function embed($atts)
+    protected function embed($atts)
     {
         $this->enqueue_assets();
 
@@ -64,8 +64,9 @@ class Embed
     /**
      * Enqueue JS and CSS assets
      */
-    private function enqueue_assets()
+    protected function enqueue_assets()
     {
+        wp_enqueue_script('calcom-loader-js');
         wp_enqueue_script('calcom-embed-js');
         wp_enqueue_style('calcom-embed-css');
     }
@@ -76,7 +77,7 @@ class Embed
      * @param array $atts Prepared shortcode attributes
      * @return string JSON encoded widget data
      */
-    private function prepare_widget_data($atts)
+    protected function prepare_widget_data($atts)
     {
         $data = array(
             'type' => (int) $atts['type'],
@@ -95,7 +96,7 @@ class Embed
      * @param array $atts Raw shortcode attributes
      * @return array Normalized attributes
      */
-    private function prepare_atts($atts)
+    protected function prepare_atts($atts)
     {
         if (!is_array($atts)) {
             $atts = array();
@@ -107,6 +108,8 @@ class Embed
             'text' => 'Book me',
             'utm' => '',
             'prefill' => 'false',
+            'ui' => '{}',
+            'config' => '{}',
         ), $atts);
 
         $normalized = $this->normalize_url($atts['url']);
@@ -123,6 +126,8 @@ class Embed
             'customCalInstance' => esc_url_raw($normalized['instance']),
             'prefill' => ($atts['prefill'] === 'true'),
             'utm' => $this->parse_utm($atts['utm']),
+            'ui' => $atts['ui'],
+            'config' => $atts['config'],
         );
     }
 
@@ -132,7 +137,7 @@ class Embed
      * @param string $url Raw URL
      * @return array Array with url and instance (if self-hosted)
      */
-    private function normalize_url($url)
+    protected function normalize_url($url)
     {
         $url = trim($url);
 
@@ -181,7 +186,7 @@ class Embed
      * @param array $atts Shortcode attributes
      * @return array Query parameters
      */
-    private function build_query_params($atts)
+    protected function build_query_params($atts)
     {
         $query_params = array();
 
@@ -215,7 +220,7 @@ class Embed
      * @param string $utm_string Comma separated key:value pairs
      * @return array An array of UTM parameters
      */
-    private function parse_utm($utm_string)
+    protected function parse_utm($utm_string)
     {
         $utm = array();
 

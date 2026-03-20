@@ -11,6 +11,8 @@ class Cal
     private function includes()
     {
         include_once CALCOM_DIR_PATH . 'inc/class.embed.php';
+        include_once CALCOM_DIR_PATH . 'inc/admin/class.customizer.php';
+        include_once CALCOM_DIR_PATH . 'inc/class.custom-embed.php';
     }
 
     private function __construct()
@@ -18,50 +20,75 @@ class Cal
         $this->includes();
         $this->hooks();
 
-        $embed = new \CalCom\Embed();
-        $embed->hooks();
+        (new Embed())->hooks();
+        (new Customizer())->hooks();
+        (new CustomEmbed())->hooks();
     }
 
     private function hooks()
     {
-        add_action('wp_enqueue_scripts', array($this, 'register_scripts'));
+        add_action('admin_enqueue_scripts', [$this, 'register_scripts']);
+        add_action('wp_enqueue_scripts', [$this, 'register_scripts']);
     }
 
-    /**
-     * Register needed JS scripts
-     * 
-     * @return void
-     */
     public function register_scripts()
     {
-        $js_path = CALCOM_ASSETS_PATH . 'js/embed.js';
-        $css_path = CALCOM_ASSETS_PATH . 'css/style.css';
+        $ver = file_exists(CALCOM_ASSETS_PATH . 'js/embed.js')
+            ? filemtime(CALCOM_ASSETS_PATH . 'js/embed.js')
+            : false;
 
-        $js_version = file_exists($js_path) ? filemtime($js_path) : null;
-        $css_version = file_exists($css_path) ? filemtime($css_path) : null;
+        wp_register_script(
+            'calcom-loader',
+            CALCOM_ASSETS_URL . 'js/cal-loader.js',
+            [],
+            $ver,
+            true
+        );
 
         wp_register_script(
             'calcom-embed-js',
             CALCOM_ASSETS_URL . 'js/embed.js',
-            array(),
-            $js_version,
+            ['calcom-loader'],
+            $ver,
             true
+        );
+
+        wp_register_script(
+            'calcom-custom-embed-js',
+            CALCOM_ASSETS_URL . 'js/custom-embed.js',
+            ['calcom-embed-js'],
+            $ver,
+            true
+        );
+
+        wp_register_script(
+            'calcom-customizer-js',
+            CALCOM_ASSETS_URL . 'js/admin-customizer.js',
+            ['calcom-custom-embed-js'],
+            $ver,
+            true
+        );
+
+        wp_register_style(
+            'calcom-customizer-css',
+            CALCOM_ASSETS_URL . 'css/admin-customizer.css',
+            [],
+            $ver
         );
 
         wp_register_style(
             'calcom-embed-css',
             CALCOM_ASSETS_URL . 'css/style.css',
-            array(),
-            $css_version
+            [],
+            $ver
         );
     }
 
-    public static function get_instance()
+    public static function get_instance(): self
     {
         if (null === self::$instance) {
             self::$instance = new self();
         }
-
         return self::$instance;
     }
 }

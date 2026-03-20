@@ -1,0 +1,168 @@
+.cal-admin h1 {
+    margin: 20px;
+    font-weight: 400;
+}
+
+#calcom-customizer {
+    --calcom-brand: #000000;
+    --calcom-bg: #ffffff;
+    --calcom-text: #111827;
+    --calcom-gray-50: #f9fafb;
+    --calcom-gray-100: #f3f4f6;
+    --calcom-gray-200: #e5e7eb;
+    --calcom-gray-300: #d1d5db;
+    --calcom-gray-500: #6b7280;
+    --calcom-radius: 10px;
+
+    font-family: 'Inter', sans-serif;
+}
+
+#calcom-customizer #cal-customizer {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 24px;
+    align-items: start;
+}
+
+@media (max-width: 768px) {
+    #calcom-customizer #cal-customizer {
+        grid-template-columns: 1fr;
+    }
+}
+
+#calcom-customizer .customizer-controls {
+    background: var(--calcom-bg);
+    border: 1px solid var(--calcom-gray-200);
+    border-radius: var(--calcom-radius);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+#calcom-customizer .group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#calcom-customizer .section-title {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--calcom-gray-500);
+}
+
+#calcom-customizer label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--calcom-text);
+}
+
+#calcom-customizer input[type="text"],
+#calcom-customizer select {
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid var(--calcom-gray-300);
+    background: #fff;
+    font-size: 13px;
+}
+
+#calcom-customizer input:focus,
+#calcom-customizer select:focus {
+    border-color: var(--calcom-brand);
+    outline: none;
+}
+
+#calcom-customizer .checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+}
+
+#calcom-customizer .button-primary {
+    margin-top: 10px;
+    border-radius: 8px;
+    background: var(--calcom-brand);
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+#calcom-customizer .shortcode-box {
+    background: #111827;
+    border-radius: var(--calcom-radius);
+    padding: 12px;
+}
+
+#calcom-customizer .shortcode-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    color: #9ca3af;
+    margin-bottom: 6px;
+    display: block;
+}
+
+#calcom-customizer #output {
+    font-family: monospace;
+    font-size: 12px;
+    background: transparent;
+    color: #e5e7eb;
+    border: none;
+    width: 100%;
+    resize: none;
+    min-height: 70px;
+}
+
+#calcom-customizer .customizer-preview {
+    background: transparent;
+    border: 1px solid var(--calcom-gray-200);
+    border-radius: var(--calcom-radius);
+    padding: 16px;
+    overflow: hidden;
+}
+
+#calcom-customizer #preview {
+    width: 100%;
+    min-height: 600px;
+    border-radius: 8px;
+    padding: 10px;
+    overflow-x: auto;
+    overflow-y: auto;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: #9ca3af;
+    font-size: 13px;
+}
+
+#calcom-customizer #cal-preview {
+    width: 100%;
+    max-width: 900px;
+}
+
+#calcom-customizer #preview iframe {
+    width: 100%;
+    min-width: 320px;
+    max-width: 900px;
+    display: block;
+    border-radius: 6px;
+}
+
+#calcom-customizer #preview .modal-placeholder {
+    background-color: #222222;
+    padding: 15px;
+    color: #fff;
+    font-size: 16px;
+    text-align: center;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
