@@ -33,13 +33,13 @@ class Cal
 
     public function register_scripts()
     {
-        $ver = file_exists(CALCOM_ASSETS_PATH . 'js/embed.js')
-            ? filemtime(CALCOM_ASSETS_PATH . 'js/embed.js')
+        $ver = file_exists(CALCOM_ASSETS_PATH . 'js/embed.min.js')
+            ? filemtime(CALCOM_ASSETS_PATH . 'js/embed.min.js')
             : false;
 
         wp_register_script(
             'calcom-loader',
-            CALCOM_ASSETS_URL . 'js/cal-loader.js',
+            CALCOM_ASSETS_URL . 'js/cal-loader.min.js',
             [],
             $ver,
             true
@@ -47,7 +47,7 @@ class Cal
 
         wp_register_script(
             'calcom-embed-js',
-            CALCOM_ASSETS_URL . 'js/embed.js',
+            CALCOM_ASSETS_URL . 'js/embed.min.js',
             ['calcom-loader'],
             $ver,
             true
@@ -55,7 +55,7 @@ class Cal
 
         wp_register_script(
             'calcom-custom-embed-js',
-            CALCOM_ASSETS_URL . 'js/custom-embed.js',
+            CALCOM_ASSETS_URL . 'js/custom-embed.min.js',
             ['calcom-embed-js'],
             $ver,
             true
@@ -63,7 +63,7 @@ class Cal
 
         wp_register_script(
             'calcom-customizer-js',
-            CALCOM_ASSETS_URL . 'js/admin-customizer.js',
+            CALCOM_ASSETS_URL . 'js/admin-customizer.min.js',
             ['calcom-custom-embed-js'],
             $ver,
             true
@@ -71,14 +71,14 @@ class Cal
 
         wp_register_style(
             'calcom-customizer-css',
-            CALCOM_ASSETS_URL . 'css/admin-customizer.css',
+            CALCOM_ASSETS_URL . 'css/admin-customizer.min.css',
             [],
             $ver
         );
 
         wp_register_style(
             'calcom-embed-css',
-            CALCOM_ASSETS_URL . 'css/style.css',
+            CALCOM_ASSETS_URL . 'css/style.min.css',
             [],
             $ver
         );
