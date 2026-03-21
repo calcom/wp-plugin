@@ -1,60 +1,89 @@
 === Cal.com ===
 Contributors: calcom, turn2honey
 Tags: appointment, appointment booking, appointment scheduling, booking calendar, calcom
-Requires at least: 4.0
-Tested up to: 6.0.1
-Stable tag: 1.0.0
-Requires PHP: 5.2.4
-License: GNU General Public License
+Requires at least: 4.6
+Tested up to: 6.9
+Stable tag: 2.0.0
+Requires PHP: 7.4
+License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.en.html
 
-Embed Cal.com booking calendar in WordPress.
+Embed Cal.com booking calendar in WordPress with custom UI and admin widget support.
 
 == Description ==
 
-Cal.com is the open source Calendly alternative that lets you easily book appointments and schedule meetings, without the email tennis.
+Cal.com is an open-source alternative to Calendly that allows easy appointment booking and meeting scheduling.
 
-== Features ==
+This plugin enables you to:
 
-- Add Cal.com booking calendar to any WordPress page/post with a simple shortcode.
-- Display your Cal.com booking calendar inline or in a popup.
-- Customize your booking button to suit you.
+- Embed your Cal.com booking calendar inline, as a popup, or as a floating widget.
+- Customize UI with theme colors, layout, and event details visibility.
+- Pre-fill user information and add UTM tracking parameters.
+- Use the new admin widget customizer for real-time previews.
 
 == Installation ==
 
-1. Install the plugin via WordPress dashboard / or download the ZIP achieve from WordPress repository
-2. Paste the embed shortcode in a page or post.
+1. Install via the WordPress dashboard or upload the ZIP.
+2. Activate the plugin.
+3. Use the `[cal]` or `[cal_custom]` shortcode in any page, post, or widget.
 
-== Shortcode ==
+== Shortcodes ==
 
-**[cal url=/username/meetingid]**
+**[cal url="/username/meetingid" type=1]**  
 
-== Shortcode Customization == 
+Embed inline calendar.
 
-`[cal url=/username/meetingid type=2 text="Schedule a call with me"]`
+**[cal url="/username/meetingid" type=2 text="Schedule a call"]**  
 
+Embed popup trigger button.
 
-**url:** URL of the booking calendar
-**type**: Add inline or popup embed. Inline embed: **1**, Popup embed: **2**
-**text:** For popup embed, customize the text/button that triggers the popup.
- 
-== CSS Customization == 
+**[cal_custom url="/demo/30min" type=1 prefill="true" utm="source:localhost" ui='{"theme":"dark","cssVarsPerTheme":{"dark":{"cal-brand":"#a3ffcb"}},"hideEventTypeDetails":true,"layout":"week_view"}' config='{"layout":"week_view","useSlotsViewOnSmallScreen":true,"disableMobileScroll":true}']**  
 
-To customize the popup text/button, style the **#calcom-embed-link** element with CSS. 
+Embed customizable widget with full UI control, prefill, and UTM support.
 
-Example: 
+== Shortcode Attributes ==
+
+- **url:** URL of the booking calendar.
+- **type:** Embed type (1 = inline, 2 = popup, 3 = floating button for `[cal_custom]`).
+- **text:** Button text for popup embeds.
+- **prefill:** Set to `true` to prefill user info if available.
+- **utm:** Comma-separated UTM tracking parameters (e.g., `source:newsletter, medium:email`).
+- **ui:** JSON object for theme, layout, and visibility customization.
+- **config:** JSON object for advanced widget configuration (slots view, scrolling, etc.).
+
+== CSS Customization ==
+
+Customize popup/button text via CSS targeting **#calcom-embed-link**:
 
 `
-#calcom-embed-link {
+#calcom-embed-link, .calcom-embed-link {
 	background-color: #222222;
 	padding: 15px;
 	color: #fff;
 	font-size: 16px;
 	text-align: center;
-    cursor: pointer;
+	cursor: pointer;
 }
+
 `
 
 == Use of  3rd Party Software ==
 
 This plugin relies on [Cal.com embed](https://cal.com). See their [Privacy Policy](https://cal.com/privacy) and [Terms of use](https://cal.com/terms).
+
+
+== Changelog ==
+
+= 2.0.0 - 23-03-2026 =
+
+- Added widget customizer to admin page
+- Introduced new shortcode [cal_custom]
+- Support prefill with logged-in user info
+- Support adding UTM parameters to shortcode
+- Security improvements
+- Ensured compatibility with lastest WordPress version
+
+= 1.0.0 - 15-11-2022 =
+
+- Initial release
+- Supports inline & popup embed types

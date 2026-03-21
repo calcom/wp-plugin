@@ -1,0 +1,19 @@
+=== Cal.com ===
+Authors: Cal.com, Simpma
+Plugin Page: https://wordpress.org/plugins/cal-com/
+
+== Changelog ==
+
+= 2.0.0 - 23-03-2026 =
+
+- Added widget customizer to admin page
+- Introduced new shortcode [cal_custom]
+- Prefill with logged-in user info
+- Support adding UTM parameters to shortcode
+- Security improvements
+- Ensured compatibility with lastest WordPress version
+
+= 1.0.0 - 15-11-2022 =
+
+- Initial release
+- Supports inline & popup embed types
