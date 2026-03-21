@@ -12,6 +12,10 @@ Embed your Cal.com booking calendar in WordPress with inline, popup, or floating
 - Admin widget customizer for live previews.
 - Secure and compatible with PHP 7.4+ and latest WordPress.
 
+## Demo
+
+![Cal.com WordPress Plugin Demo](https://simpma.com/wp-content/uploads/2026/03/calcom-wp-plugin-demo.gif)
+
 ## Installation
 
 1. Install via the WordPress dashboard or upload the plugin ZIP.
