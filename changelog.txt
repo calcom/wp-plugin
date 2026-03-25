@@ -4,6 +4,10 @@ Plugin Page: https://wordpress.org/plugins/cal-com/
 
 == Changelog ==
 
+= 2.1.0 - 26-03-2026 =
+
+- Script enqueue handle mismatch fix
+
 = 2.0.0 - 23-03-2026 =
 
 - Added widget customizer to admin page
