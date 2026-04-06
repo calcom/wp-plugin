@@ -38,7 +38,7 @@ class Cal
             : false;
 
         wp_register_script(
-            'calcom-loader',
+            'calcom-loader-js',
             CALCOM_ASSETS_URL . 'js/cal-loader.min.js',
             [],
             $ver,
@@ -48,7 +48,7 @@ class Cal
         wp_register_script(
             'calcom-embed-js',
             CALCOM_ASSETS_URL . 'js/embed.min.js',
-            ['calcom-loader'],
+            ['calcom-loader-js'],
             $ver,
             true
         );

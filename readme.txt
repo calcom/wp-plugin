@@ -3,7 +3,7 @@ Contributors: calcom, turn2honey
 Tags: appointment, appointment booking, appointment scheduling, booking calendar, calcom
 Requires at least: 4.6
 Tested up to: 6.9
-Stable tag: 2.0.0
+Stable tag: 2.1.0
 Requires PHP: 7.4
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.en.html
@@ -20,6 +20,8 @@ This plugin enables you to:
 - Customize UI with theme colors, layout, and event details visibility.
 - Pre-fill user information and add UTM tracking parameters.
 - Use the new admin widget customizer for real-time previews.
+
+[Watch Demo](https://simpma.com/plugins/cal-com/)
 
 == Installation ==
 
@@ -74,7 +76,12 @@ This plugin relies on [Cal.com embed](https://cal.com). See their [Privacy Polic
 
 == Changelog ==
 
-= 2.0.0 - 23-03-2026 =
+= 2.1.0 - 26-03-2026 =
+
+- Script enqueue handle mismatch fix
+
+
+= 2.0.0 - 21-03-2026 =
 
 - Added widget customizer to admin page
 - Introduced new shortcode [cal_custom]

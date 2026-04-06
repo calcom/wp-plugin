@@ -40,7 +40,7 @@ class Embed
 
         $widget_data = $this->prepare_widget_data($atts);
 
-        if (!empty($widget_data)) {
+        if (!empty($widget_data) && $widget_data !== 'null') {
             wp_add_inline_script(
                 'calcom-embed-js',
                 'window.calcomData = ' . $widget_data . ';',
