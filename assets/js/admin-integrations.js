@@ -1,0 +1,108 @@
+/**
+ * Admin integrations page JS.
+ *
+ * Handles tab switching, integration toggle toggles, and
+ * event type selector -> calLink bridge.
+ */
+(function() {
+    "use strict";
+
+    if (typeof window.calcomIntegrations === 'undefined') return;
+
+    var ajaxUrl = window.calcomIntegrations.ajaxUrl;
+    var nonce   = window.calcomIntegrations.nonce;
+
+    function toggleIntegration(key, state, checkbox) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', ajaxUrl);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.onload = function() {
+            var resp;
+            try {
+                resp = JSON.parse(xhr.responseText);
+            } catch (e) {
+                checkbox.checked = !state;
+                alert('An error occurred. Please try again.');
+                return;
+            }
+            if (!resp.success) {
+                checkbox.checked = !state;
+                alert(resp.data || 'An error occurred.');
+            }
+        };
+        xhr.onerror = function() {
+            checkbox.checked = !state;
+            alert('An error occurred. Please try again.');
+        };
+        xhr.send('action=calcom_toggle_integration&nonce=' + encodeURIComponent(nonce) + '&key=' + encodeURIComponent(key) + '&state=' + (state ? '1' : '0'));
+    }
+
+    function activateTab(tabEl, panelEl) {
+        var tabs   = document.querySelectorAll('.calcom-integration-tab');
+        var panels = document.querySelectorAll('.calcom-integration-panel');
+        for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('calcom-integration-tab--active');
+        for (var j = 0; j < panels.length; j++) panels[j].classList.remove('calcom-integration-panel--active');
+        if (tabEl) tabEl.classList.add('calcom-integration-tab--active');
+        if (panelEl) panelEl.classList.add('calcom-integration-panel--active');
+    }
+
+    function initTabs() {
+        var tabs = document.querySelectorAll('.calcom-integration-tab');
+        for (var i = 0; i < tabs.length; i++) {
+            tabs[i].addEventListener('click', function() {
+                var key = this.getAttribute('data-integration');
+                var panel = document.querySelector('.calcom-integration-panel[data-integration="' + key + '"]');
+                activateTab(this, panel);
+            });
+        }
+    }
+
+    function initToggle() {
+        var switches = document.querySelectorAll('.calcom-integration-switch');
+        for (var i = 0; i < switches.length; i++) {
+            switches[i].addEventListener('change', function() {
+                var key = this.getAttribute('data-integration');
+                toggleIntegration(key, this.checked, this);
+            });
+        }
+    }
+
+    function initEventTypeSelector() {
+        var select = document.querySelector('select[data-cal-link]');
+        if (!select) return;
+
+        var calLink = document.getElementById('calLink');
+        if (calLink && select.value) {
+            var opt = select.querySelector('option[value="' + select.value + '"]');
+            if (opt) {
+                calLink.value = opt.getAttribute('data-booking-url') || '';
+            }
+        }
+
+        select.addEventListener('change', function() {
+            var url = '';
+            if (this.value) {
+                var opt = this.querySelector('option[value="' + this.value + '"]');
+                if (opt) {
+                    url = opt.getAttribute('data-booking-url') || '';
+                }
+            }
+            if (calLink) {
+                calLink.value = url;
+                calLink.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+        });
+    }
+
+    function init() {
+        initTabs();
+        initToggle();
+        initEventTypeSelector();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();

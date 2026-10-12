@@ -39,7 +39,6 @@ class Embed
         $this->enqueue_assets();
 
         $widget_data = $this->prepare_widget_data($atts);
-
         if (!empty($widget_data) && $widget_data !== 'null') {
             wp_add_inline_script(
                 'calcom-embed-js',
@@ -51,9 +50,8 @@ class Embed
         $type = (int) $atts['type'];
 
         switch ($type) {
-
             case 2:
-                return '<span id="calcom-embed-link">' . esc_html($atts['text']) . '</span>';
+                return '<span id="calcom-embed-link" data-url="' . esc_url($atts['url']) . '">' . esc_html($atts['text']) . '</span>';
             case 3:
                 return '';
             default:
@@ -105,7 +103,7 @@ class Embed
         $atts = shortcode_atts(array(
             'url' => '',
             'type' => 1,
-            'text' => 'Book me',
+            'text' => __('Book me', 'cal-com'),
             'utm' => '',
             'prefill' => 'false',
             'ui' => '{}',
@@ -147,7 +145,6 @@ class Embed
 
         // for default URL, only keep the path
         if (strpos($url, 'https://cal.com/') === 0) {
-
             $parsed = wp_parse_url($url);
             $path = isset($parsed['path']) ? trim($parsed['path'], '/') : '';
 
@@ -159,11 +156,9 @@ class Embed
 
         // full URL shows self-hosted instance
         if (preg_match('#^https?://#i', $url)) {
-
             $parts = wp_parse_url($url);
 
             if (!empty($parts['host'])) {
-
                 $scheme = isset($parts['scheme']) ? $parts['scheme'] : 'https';
                 $path = isset($parts['path']) ? trim($parts['path'], '/') : '';
 
@@ -192,7 +187,6 @@ class Embed
 
         // prefill logged in user info
         if ($atts['prefill'] === 'true' && is_user_logged_in()) {
-
             $user = wp_get_current_user();
 
             if (!empty($user->display_name)) {

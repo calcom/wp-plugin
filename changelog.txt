@@ -4,6 +4,17 @@ Plugin Page: https://wordpress.org/plugins/cal-com/
 
 == Changelog ==
 
+= 3.0.0 - 05-10-2026 =
+
+- Added LearnPress and Tutor LMS integrations
+- Added Ultimate Member and UsersWP integrations
+- Display a Cal.com scheduling prompt in instructors & users profile page
+- Added Contact Form 7, Fluent Forms, and WPForms integrations
+- Display a Cal.com scheduling prompt after successful form submissions
+- Added WooCommerce integration.
+- Display a Cal.com scheduling prompt in order thank-you page
+- Added Integrations admin page for enabling/disabling integrations
+
 = 2.1.0 - 26-03-2026 =
 
 - Script enqueue handle mismatch fix
@@ -12,7 +23,7 @@ Plugin Page: https://wordpress.org/plugins/cal-com/
 
 - Added widget customizer to admin page
 - Introduced new shortcode [cal_custom]
-- Prefill with logged-in user info
+- Support prefill with logged-in user info
 - Support adding UTM parameters to shortcode
 - Security improvements
 - Ensured compatibility with lastest WordPress version

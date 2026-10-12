@@ -53,11 +53,9 @@ class CustomEmbed extends Embed
 
         switch ($type) {
             case 2:
-                return '<span id="' . esc_attr(self::ELEMENT_ID) . '" class="calcom-embed-link">' . esc_html($atts['text']) . '</span>';
-
+                return '<span id="' . esc_attr(self::ELEMENT_ID) . '" class="calcom-embed-link" data-url="' . esc_url($atts['url']) . '">' . esc_html($atts['text']) . '</span>';
             case 3:
                 return ''; // floating button handled via JS
-
             default:
                 return '<div id="' . esc_attr(self::ELEMENT_ID) . '"></div>';
         }
